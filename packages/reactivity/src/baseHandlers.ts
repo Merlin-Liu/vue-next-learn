@@ -6,20 +6,20 @@ import { isObject, hasOwn, isSymbol } from '@vue/shared'
 import { isRef } from './ref'
 
 const builtInSymbols = new Set(
-  Object.getOwnPropertyNames(Symbol)
-    .map(key => (Symbol as any)[key])
-    .filter(isSymbol)
+  Object.getOwnPropertyNames(Symbol).map(key => (Symbol as any)[key]).filter(isSymbol)
 )
 
 function createGetter(isReadonly: boolean) {
   return function get(target: any, key: string | symbol, receiver: any) {
     const res = Reflect.get(target, key, receiver)
+
     if (isSymbol(key) && builtInSymbols.has(key)) {
       return res
     }
     if (isRef(res)) {
       return res.value
     }
+
     track(target, OperationTypes.GET, key)
     return isObject(res)
       ? isReadonly
@@ -31,38 +31,40 @@ function createGetter(isReadonly: boolean) {
   }
 }
 
-function set(
-  target: any,
-  key: string | symbol,
-  value: any,
-  receiver: any
-): boolean {
+function set(target: any, key: string | symbol, value: any, receiver: any): boolean {
   value = toRaw(value)
   const hadKey = hasOwn(target, key)
   const oldValue = target[key]
+
   if (isRef(oldValue) && !isRef(value)) {
     oldValue.value = value
     return true
   }
+
   const result = Reflect.set(target, key, value, receiver)
+
   // don't trigger if target is something up in the prototype chain of original
   if (target === toRaw(receiver)) {
-    /* istanbul ignore else */
     if (__DEV__) {
       const extraInfo = { oldValue, newValue: value }
       if (!hadKey) {
         trigger(target, OperationTypes.ADD, key, extraInfo)
-      } else if (value !== oldValue) {
+      }
+      else if (value !== oldValue) {
         trigger(target, OperationTypes.SET, key, extraInfo)
       }
-    } else {
+    }
+    // 非DEV
+    else {
       if (!hadKey) {
         trigger(target, OperationTypes.ADD, key)
-      } else if (value !== oldValue) {
+      }
+      else if (value !== oldValue) {
         trigger(target, OperationTypes.SET, key)
       }
     }
   }
+
   return result
 }
 
@@ -71,13 +73,14 @@ function deleteProperty(target: any, key: string | symbol): boolean {
   const oldValue = target[key]
   const result = Reflect.deleteProperty(target, key)
   if (result && hadKey) {
-    /* istanbul ignore else */
     if (__DEV__) {
       trigger(target, OperationTypes.DELETE, key, { oldValue })
-    } else {
+    }
+    else {
       trigger(target, OperationTypes.DELETE, key)
     }
   }
+  
   return result
 }
 

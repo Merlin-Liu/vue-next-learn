@@ -41,17 +41,16 @@ export function isEffect(fn: any): fn is ReactiveEffect {
   return fn != null && fn[effectSymbol] === true
 }
 
-export function effect<T = any>(
-  fn: () => T,
-  options: ReactiveEffectOptions = EMPTY_OBJ
-): ReactiveEffect<T> {
+export function effect<T = any>(fn: () => T, options: ReactiveEffectOptions = EMPTY_OBJ): ReactiveEffect<T> {
   if (isEffect(fn)) {
     fn = fn.raw
   }
+
   const effect = createReactiveEffect(fn, options)
   if (!options.lazy) {
     effect()
   }
+
   return effect
 }
 
@@ -65,13 +64,11 @@ export function stop(effect: ReactiveEffect) {
   }
 }
 
-function createReactiveEffect<T = any>(
-  fn: () => T,
-  options: ReactiveEffectOptions
-): ReactiveEffect<T> {
+function createReactiveEffect<T = any>(fn: () => T, options: ReactiveEffectOptions): ReactiveEffect<T> {
   const effect = function reactiveEffect(...args: any[]): any {
     return run(effect, fn, args)
   } as ReactiveEffect
+
   effect[effectSymbol] = true
   effect.active = true
   effect.raw = fn
@@ -88,12 +85,14 @@ function run(effect: ReactiveEffect, fn: Function, args: any[]): any {
   if (!effect.active) {
     return fn(...args)
   }
+
   if (activeReactiveEffectStack.indexOf(effect) === -1) {
     cleanup(effect)
     try {
       activeReactiveEffectStack.push(effect)
       return fn(...args)
-    } finally {
+    }
+    finally {
       activeReactiveEffectStack.pop()
     }
   }
@@ -119,14 +118,11 @@ export function resumeTracking() {
   shouldTrack = true
 }
 
-export function track(
-  target: any,
-  type: OperationTypes,
-  key?: string | symbol
-) {
+export function track(target: any, type: OperationTypes, key?: string | symbol) {
   if (!shouldTrack) {
     return
   }
+
   const effect = activeReactiveEffectStack[activeReactiveEffectStack.length - 1]
   if (effect) {
     if (type === OperationTypes.ITERATE) {
@@ -144,28 +140,19 @@ export function track(
       dep.add(effect)
       effect.deps.push(dep)
       if (__DEV__ && effect.onTrack) {
-        effect.onTrack({
-          effect,
-          target,
-          type,
-          key
-        })
+        effect.onTrack({ effect, target, type, key })
       }
     }
   }
 }
 
-export function trigger(
-  target: any,
-  type: OperationTypes,
-  key?: string | symbol,
-  extraInfo?: any
-) {
+export function trigger(target: any, type: OperationTypes, key?: string | symbol, extraInfo?: any) {
   const depsMap = targetMap.get(target)
   if (depsMap === void 0) {
     // never been tracked
     return
   }
+  
   const effects = new Set<ReactiveEffect>()
   const computedRunners = new Set<ReactiveEffect>()
   if (type === OperationTypes.CLEAR) {
