@@ -78,6 +78,7 @@ function createReactiveEffect<T = any>(fn: () => T, options: ReactiveEffectOptio
   effect.onStop = options.onStop
   effect.computed = options.computed
   effect.deps = []
+  
   return effect
 }
 
@@ -152,7 +153,7 @@ export function trigger(target: any, type: OperationTypes, key?: string | symbol
     // never been tracked
     return
   }
-  
+
   const effects = new Set<ReactiveEffect>()
   const computedRunners = new Set<ReactiveEffect>()
   if (type === OperationTypes.CLEAR) {

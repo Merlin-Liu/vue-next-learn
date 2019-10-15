@@ -23,14 +23,10 @@ export function computed<T>(
   getterOrOptions: (() => T) | WritableComputedOptions<T>
 ): any {
   const isReadonly = isFunction(getterOrOptions)
-  const getter = isReadonly
-    ? (getterOrOptions as (() => T))
-    : (getterOrOptions as WritableComputedOptions<T>).get
+  const getter = isReadonly ? (getterOrOptions as (() => T)) : (getterOrOptions as WritableComputedOptions<T>).get
   const setter = isReadonly
     ? __DEV__
-      ? () => {
-          console.warn('Write operation failed: computed value is readonly')
-        }
+      ? () => {console.warn('Write operation failed: computed value is readonly')}
       : NOOP
     : (getterOrOptions as WritableComputedOptions<T>).set
 
@@ -41,9 +37,7 @@ export function computed<T>(
     lazy: true,
     // mark effect as computed so that it gets priority during trigger
     computed: true,
-    scheduler: () => {
-      dirty = true
-    }
+    scheduler: () => { dirty = true }
   })
   return {
     [refSymbol]: true,
@@ -67,8 +61,8 @@ export function computed<T>(
 }
 
 function trackChildRun(childRunner: ReactiveEffect) {
-  const parentRunner =
-    activeReactiveEffectStack[activeReactiveEffectStack.length - 1]
+  const parentRunner = activeReactiveEffectStack[activeReactiveEffectStack.length - 1]
+  
   if (parentRunner) {
     for (let i = 0; i < childRunner.deps.length; i++) {
       const dep = childRunner.deps[i]
