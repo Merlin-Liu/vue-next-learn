@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<div id="container"></div>
+<script src="vue.global.js"></script>
+<script>
+    const {createApp, reactive, toRefs, h, onMounted, onUnmounted} = Vue
+
+    function usePosition() {
+        let position = reactive({x: 0, y: 0})
+
+        function update({pageX, pageY}) {
+            position.x = pageX
+            position.y = pageY
+        }
+
+        onMounted(() => {
+            window.addEventListener('mousemove', update)
+        })
+        onUnmounted(() => {
+            window.removeEventListener('mousemove', update)
+        })
+
+        return toRefs(position)
+    }
+
+
+    const App = {
+        setup() {
+            // let state = reactive({name: 'liuguangfu'})
+
+            // function handleClick () {
+            //     state.name += '1'
+            // }
+
+            let {x, y} = usePosition()
+
+            return { // 这个对象作为渲染时候的上下文
+                // state,
+                // handleClick,
+                x, y
+            }
+        },
+        render () {
+            // return h('div', {
+            //     onClick: this.handleClick
+            // }, this.state.name)
+
+            return h('div', null, `x: ${this.x} ---- y: ${this.y}`)
+        },
+
+    }
+    createApp().mount(App, container)
+</script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<div id="container"></div>
+<script src="vue.global.js"></script>
+<script>
+    const {reactive, effect} = Vue
+
+    let state = reactive({name: 'liuguangfu '})
+
+    // effect 副作用
+    effect(() => {
+        console.log(state.name) // 初始化执行一次，数据变了再执行一次
+    })
+
+    state.name = '1212'
+</script>
+</body>
+</html> 
