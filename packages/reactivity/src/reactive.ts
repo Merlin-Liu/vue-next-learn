@@ -46,10 +46,13 @@ export function reactive(target: object) {
   if (readonlyToRaw.has(target)) {
     return target
   }
+
   // target is explicitly marked as readonly by user
   if (readonlyValues.has(target)) {
     return readonly(target)
   }
+
+  // 非readoly
   return createReactiveObject(
     target,
     rawToReactive,
@@ -59,9 +62,7 @@ export function reactive(target: object) {
   )
 }
 
-export function readonly<T extends object>(
-  target: T
-): Readonly<UnwrapNestedRefs<T>> {
+export function readonly<T extends object>(target: T): Readonly<UnwrapNestedRefs<T>> {
   // value is a mutable observable, retrieve its original and return
   // a readonly version.
   if (reactiveToRaw.has(target)) {
@@ -89,23 +90,30 @@ function createReactiveObject(
     }
     return target
   }
-  // target already has corresponding Proxy
+
+  // target已经被代理过了
   let observed = toProxy.get(target)
   if (observed !== void 0) {
     return observed
   }
-  // target is already a Proxy
+
+  // target是个proxy
   if (toRaw.has(target)) {
     return target
   }
+
   // only a whitelist of value types can be observed.
   if (!canObserve(target)) {
     return target
   }
+
   const handlers = collectionTypes.has(target.constructor) ? collectionHandlers : baseHandlers
+
   observed = new Proxy(target, handlers)
+
   toProxy.set(target, observed)
   toRaw.set(observed, target)
+
   if (!targetMap.has(target)) {
     targetMap.set(target, new Map())
   }

@@ -4111,43 +4111,40 @@ var Vue = (function(exports) {
       readonlyCollectionHandlers
     )
   }
-  function createReactiveObject(
-    target,
-    toProxy,
-    toRaw,
-    baseHandlers,
-    collectionHandlers
-  ) {
+  function createReactiveObject(target, toProxy, toRaw, baseHandlers, collectionHandlers) {
     if (!isObject(target)) {
-      {
-        console.warn(`value cannot be made reactive: ${String(target)}`)
-      }
       return target
     }
+
     // target already has corresponding Proxy
     let observed = toProxy.get(target)
     if (observed !== void 0) {
       return observed
     }
+
     // target is already a Proxy
     if (toRaw.has(target)) {
       return target
     }
+
     // only a whitelist of value types can be observed.
     if (!canObserve(target)) {
       return target
     }
-    const handlers = collectionTypes.has(target.constructor)
-      ? collectionHandlers
-      : baseHandlers
+    const handlers = collectionTypes.has(target.constructor) ? collectionHandlers : baseHandlers
+
     observed = new Proxy(target, handlers)
+
     toProxy.set(target, observed)
     toRaw.set(observed, target)
+
     if (!targetMap.has(target)) {
       targetMap.set(target, new Map())
     }
+    
     return observed
   }
+
   function isReactive(value) {
     return reactiveToRaw.has(value) || readonlyToRaw.has(value)
   }

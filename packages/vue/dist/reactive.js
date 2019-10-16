@@ -75,9 +75,11 @@ function createReactiveObject(target) {
     }
   }
 
-  return (proxy = new Proxy(target, baseHandler))
+  observed = new Proxy(target, baseHandler)
   toProxy.set(target, observed)
   toRaw.set(observed, target)
+
+  return observed
 
 }
 
