@@ -21,13 +21,7 @@ function createGetter(isReadonly: boolean) {
     }
 
     track(target, OperationTypes.GET, key)
-    return isObject(res)
-      ? isReadonly
-        ? // need to lazy access readonly and reactive here to avoid
-          // circular dependency
-          readonly(res)
-        : reactive(res)
-      : res
+    return isObject(res) ? (isReadonly ? readonly(res) : reactive(res)) : res
   }
 }
 

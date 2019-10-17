@@ -77,17 +77,10 @@ export function readonly<T extends object>(target: T): Readonly<UnwrapNestedRefs
   )
 }
 
-function createReactiveObject(
-  target: any,
-  toProxy: WeakMap<any, any>,
-  toRaw: WeakMap<any, any>,
-  baseHandlers: ProxyHandler<any>,
-  collectionHandlers: ProxyHandler<any>
-) {
+function createReactiveObject(target: any, toProxy: WeakMap<any, any>, toRaw: WeakMap<any, any>, baseHandlers: ProxyHandler<any>, collectionHandlers: ProxyHandler<any>) {
   if (!isObject(target)) {
-    if (__DEV__) {
-      console.warn(`value cannot be made reactive: ${String(target)}`)
-    }
+    __DEV__ && console.warn(`value cannot be made reactive: ${String(target)}`)
+
     return target
   }
 
