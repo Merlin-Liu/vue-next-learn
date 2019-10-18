@@ -4359,6 +4359,7 @@ var Vue = (function(exports) {
     for (const key in object) {
       ret[key] = toProxyRef(object, key)
     }
+
     return ret
   }
   function toProxyRef(object, key) {

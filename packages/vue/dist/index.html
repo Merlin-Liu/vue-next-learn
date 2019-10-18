@@ -10,7 +10,7 @@
 <div id="container"></div>
 <script src="vue.global.js"></script>
 <script>
-    const {createApp, reactive, toRefs, h, onMounted, onUnmounted} = Vue
+    const {createApp, reactive, toRefs, h, onMounted, onUnmounted, isRef} = Vue
 
     function usePosition() {
         let position = reactive({x: 0, y: 0})
@@ -27,7 +27,8 @@
             window.removeEventListener('mousemove', update)
         })
 
-        return toRefs(position)
+        const p = toRefs(position)
+        return p
     }
 
 
@@ -53,10 +54,9 @@
             // }, this.state.name)
 
             return h('div', null, `x: ${this.x} ---- y: ${this.y}`)
-        },
-
+        }
     }
-    createApp().mount(App, container)
+    window.vm = createApp().mount(App, container)
 </script>
 </body>
 </html>

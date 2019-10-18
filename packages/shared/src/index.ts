@@ -27,18 +27,14 @@ export const extend = <T extends object, U extends object>(
 }
 
 const hasOwnProperty = Object.prototype.hasOwnProperty
-export const hasOwn = (
-  val: object,
-  key: string | symbol
-): key is keyof typeof val => hasOwnProperty.call(val, key)
+export const hasOwn = (val: object, key: string | symbol): key is keyof typeof val => hasOwnProperty.call(val, key)
 
 export const isArray = Array.isArray
 export const isFunction = (val: any): val is Function =>
   typeof val === 'function'
 export const isString = (val: any): val is string => typeof val === 'string'
 export const isSymbol = (val: any): val is symbol => typeof val === 'symbol'
-export const isObject = (val: any): val is Record<any, any> =>
-  val !== null && typeof val === 'object'
+export const isObject = (val: any): val is Record<any, any> => val !== null && typeof val === 'object'
 
 export const objectToString = Object.prototype.toString
 export const toTypeString = (value: unknown): string =>

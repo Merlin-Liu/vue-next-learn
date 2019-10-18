@@ -47,27 +47,21 @@ export function toRefs<T extends object>(
   return ret
 }
 
-function toProxyRef<T extends object, K extends keyof T>(
-  object: T,
-  key: K
-): Ref<T[K]> {
+function toProxyRef<T extends object, K extends keyof T>(object: T, key: K): Ref<T[K]> {
   return {
+
     [refSymbol]: true,
     get value(): any {
       return object[key]
     },
+
     set value(newVal) {
       object[key] = newVal
     }
   }
 }
 
-type BailTypes =
-  | Function
-  | Map<any, any>
-  | Set<any>
-  | WeakMap<any, any>
-  | WeakSet<any>
+type BailTypes = | Function | Map<any, any> | Set<any> | WeakMap<any, any> | WeakSet<any>
 
 // Recursively unwraps nested value bindings.
 export type UnwrapRef<T> = {
